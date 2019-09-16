@@ -48,6 +48,7 @@ namespace Lime.Connection
                     try
                     {
                         client?.Dispose();
+                        //client?.Disconnect(false); // 2.0
                     }
                     catch { }
 
