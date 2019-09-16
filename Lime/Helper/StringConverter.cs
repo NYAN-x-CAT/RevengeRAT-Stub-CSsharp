@@ -20,18 +20,25 @@ namespace Lime.Helper
 
         public static byte[] Decompress(byte[] B)
         {
-            MemoryStream ms = new MemoryStream(B);
-            GZipStream gzipStream = new GZipStream((Stream)ms, CompressionMode.Decompress);
-            byte[] buffer = new byte[4];
-            ms.Position = checked(ms.Length - 5L);
-            ms.Read(buffer, 0, 4);
-            int count = BitConverter.ToInt32(buffer, 0);
-            ms.Position = 0L;
-            byte[] AR = new byte[checked(count - 1 + 1)];
-            gzipStream.Read(AR, 0, count);
-            gzipStream.Dispose();
-            ms.Dispose();
-            return AR;
+            try
+            {
+                MemoryStream ms = new MemoryStream(B);
+                GZipStream gzipStream = new GZipStream((Stream)ms, CompressionMode.Decompress);
+                byte[] buffer = new byte[4];
+                ms.Position = checked(ms.Length - 5L);
+                ms.Read(buffer, 0, 4);
+                int count = BitConverter.ToInt32(buffer, 0);
+                ms.Position = 0L;
+                byte[] AR = new byte[checked(count - 1 + 1)];
+                gzipStream.Read(AR, 0, count);
+                gzipStream.Dispose();
+                ms.Dispose();
+                return AR;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static string Encode(string str)
