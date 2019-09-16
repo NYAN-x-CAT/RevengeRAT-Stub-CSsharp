@@ -129,9 +129,16 @@ namespace Lime.Helper
         }
         public static string GetActiveWindow()
         {
-            StringBuilder W = new StringBuilder(256);
-            Native.GetWindowText(Native.GFW(), W, W.Capacity);
-            return StringConverter.Encode(W.ToString());
+            try
+            {
+                StringBuilder W = new StringBuilder(256);
+                Native.GetWindowText(Native.GFW(), W, W.Capacity);
+                return StringConverter.Encode(W.ToString());
+            }
+            catch
+            {
+                return StringConverter.Encode("");
+            }
         }
     }
 }
