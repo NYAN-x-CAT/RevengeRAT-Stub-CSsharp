@@ -16,22 +16,22 @@ namespace Lime.Helper
             return Encoding.Default.GetString(b);
         }
 
-        public static byte[] Decompress(byte[] B)
+        public static byte[] Decompress(byte[] data)
         {
             try
             {
-                MemoryStream ms = new MemoryStream(B);
-                GZipStream gzipStream = new GZipStream((Stream)ms, CompressionMode.Decompress);
-                byte[] buffer = new byte[4];
-                ms.Position = checked(ms.Length - 5L);
-                ms.Read(buffer, 0, 4);
-                int count = BitConverter.ToInt32(buffer, 0);
-                ms.Position = 0L;
-                byte[] AR = new byte[checked(count - 1 + 1)];
-                gzipStream.Read(AR, 0, count);
-                gzipStream.Dispose();
-                ms.Dispose();
-                return AR;
+                MemoryStream memoryStream = new MemoryStream();
+                memoryStream.Write(data, 0, data.Length);
+                memoryStream.Position = 0L;
+                GZipStream gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress, true);
+                MemoryStream memoryStream2 = new MemoryStream();
+                byte[] array = new byte[64];
+                for (int i = gzipStream.Read(array, 0, array.Length); i > 0; i = gzipStream.Read(array, 0, array.Length))
+                {
+                    memoryStream2.Write(array, 0, i);
+                }
+                gzipStream.Close();
+                return memoryStream2.ToArray();
             }
             catch
             {

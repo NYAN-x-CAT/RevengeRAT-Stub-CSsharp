@@ -115,21 +115,7 @@ namespace Lime.Connection
         private static void Ping(object state)
         {
             byte[] packet = StringConverter.StringToBytes("keepAlivePing!");
-            try
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    ms.Write(packet, 0, packet.Length);
-                    ms.Write(StringConverter.StringToBytes(Config.splitter), 0, Config.splitter.Length);
-                    client.SendBufferSize = packet.Length;
-                    client.Poll(2500, SelectMode.SelectWrite);
-                    client.Send(ms.ToArray(), 0, (int)ms.Length, SocketFlags.None);
-                }
-            }
-            catch
-            {
-                isConnected = false;
-            }
+            TcpSend(packet);
             Debug.WriteLine("Pinged!");
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -143,8 +129,9 @@ namespace Lime.Connection
             {
                 using (MemoryStream ms = new MemoryStream())
                 {
+                    byte[] splitter = StringConverter.StringToBytes(Config.splitter);
                     ms.Write(packet, 0, packet.Length);
-                    ms.Write(StringConverter.StringToBytes(Config.splitter), 0, Config.splitter.Length);
+                    ms.Write(splitter, 0, splitter.Length);
                     client.SendBufferSize = packet.Length;
                     client.Poll(-1, SelectMode.SelectWrite);
                     client.Send(ms.ToArray(), 0, (int)ms.Length, SocketFlags.None);

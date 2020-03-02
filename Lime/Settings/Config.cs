@@ -9,7 +9,7 @@ namespace Lime.Settings
         public static string port = "333"; // Port
         public static string id = "TnlhbkNhdFJldmVuZ2U="; // Client identifier [base64]
         public static string currentMutex = "pHXJvbCGPPiC"; // Mutex
-        public static string key = "nyan"; // Socket Key
+        public static string key = "Revenge-RAT"; // Socket Key
 
 
         public static Mutex programMutex; // Ignore
